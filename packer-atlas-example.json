@@ -63,10 +63,6 @@
         ]
     },{
         "type": "shell",
-        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} {{ .Path }}",
-        "script": "script/provision.sh"
-    },{
-        "type": "shell",
         "environment_vars": [
             "CLEANUP_PAUSE={{user `cleanup_pause`}}",
             "UPDATE={{user `update`}}",
