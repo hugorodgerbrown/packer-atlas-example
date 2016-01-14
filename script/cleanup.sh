@@ -1,13 +1,14 @@
 #!/bin/bash -eux
 
-CLEANUP_PAUSE=${CLEANUP_PAUSE:-0}
-echo "==> Pausing for ${CLEANUP_PAUSE} seconds..."
-sleep ${CLEANUP_PAUSE}
-
 # Make sure udev does not block our network - http://6.ptmc.org/?p=164
 echo "==> Cleaning up udev rules"
 rm -rf /dev/.udev/
 rm /lib/udev/rules.d/75-persistent-net-generator.rules
+
+# Clean up the apt cache
+apt-get -y autoremove --purge
+apt-get -y autoclean
+apt-get -y clean
 
 echo "==> Cleaning up leftover dhcp leases"
 # Ubuntu 10.04
@@ -17,18 +18,13 @@ fi
 # Ubuntu 12.04 & 14.04
 if [ -d "/var/lib/dhcp" ]; then
     rm /var/lib/dhcp/*
-fi 
+fi
 
 # Add delay to prevent "vagrant reload" from failing
 echo "pre-up sleep 2" >> /etc/network/interfaces
 
 echo "==> Cleaning up tmp"
 rm -rf /tmp/*
-
-# Cleanup apt cache
-apt-get -y autoremove --purge
-apt-get -y clean
-apt-get -y autoclean
 
 echo "==> Installed packages"
 dpkg --get-selections | grep -v deinstall

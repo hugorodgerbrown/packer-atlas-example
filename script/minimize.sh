@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
-# echo "==> Installed packages before cleanup"
-# dpkg --get-selections | grep -v deinstall
+echo "==> Installed packages before cleanup"
+dpkg --get-selections | grep -v deinstall
 
 # Remove some packages to get a minimal install
 echo "==> Removing all linux kernels except the currrent one"
@@ -12,10 +12,10 @@ echo "==> Removing development packages"
 dpkg --list | awk '{ print $2 }' | grep -- '-dev$' | xargs apt-get -y purge
 echo "==> Removing documentation"
 dpkg --list | awk '{ print $2 }' | grep -- '-doc$' | xargs apt-get -y purge
-# echo "==> Removing development tools"
-#dpkg --list | grep -i compiler | awk '{ print $2 }' | xargs apt-get -y purge
-#apt-get -y purge cpp gcc g++
-# apt-get -y purge build-essential
+echo "==> Removing development tools"
+dpkg --list | grep -i compiler | awk '{ print $2 }' | xargs apt-get -y purge
+apt-get -y purge cpp gcc g++
+apt-get -y purge build-essential
 echo "==> Removing default system Ruby"
 apt-get -y purge ruby ri doc
 echo "==> Removing default system Python"
@@ -27,11 +27,10 @@ apt-get -y purge ppp pppconfig pppoeconf
 echo "==> Removing other oddities"
 apt-get -y purge popularity-contest installation-report landscape-common wireless-tools wpasupplicant ubuntu-serverguide
 
-# # this is in cleanup.sh
 # Clean up the apt cache
-# apt-get -y autoremove --purge
-# apt-get -y autoclean
-# apt-get -y clean
+apt-get -y autoremove --purge
+apt-get -y autoclean
+apt-get -y clean
 
 # Clean up orphaned packages with deborphan
 apt-get -y install deborphan
@@ -42,6 +41,8 @@ apt-get -y purge deborphan dialog
 
 echo "==> Removing man pages"
 rm -rf /usr/share/man/*
+## these two statements stop vboxsf working as expected,
+## which means guest folders can't be mounted
 # echo "==> Removing APT files"
 # find /var/lib/apt -type f | xargs rm -f
 # echo "==> Removing anything in /usr/src"
